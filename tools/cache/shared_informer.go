@@ -593,12 +593,17 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 		if oldAccessor, err := meta.Accessor(old); err == nil {
 			// Events that didn't change resourceVersion are treated as resync events
 			// and only propagated to listeners that requested resync
-			fmt.Println("old object is nil", oldAccessor == nil)
-			fmt.Println("new object is nil", accessor == nil)
-			fmt.Println("before getting old resource version")
-			fmt.Println("old resource version", oldAccessor.GetResourceVersion())
-			fmt.Println("before getting new resource version")
-			fmt.Println("new resource version", accessor.GetResourceVersion())
+			defer func() {
+				if recover() != nil {
+					fmt.Println("panic occured, recovering")
+					fmt.Println("old object", oldAccessor, "is nil", oldAccessor == nil)
+					fmt.Println("new object is nil", accessor, "is nil", accessor == nil)
+					fmt.Println("before getting old resource version")
+					fmt.Println("old resource version", oldAccessor.GetResourceVersion())
+					fmt.Println("before getting new resource version")
+					fmt.Println("new resource version", accessor.GetResourceVersion())
+				}
+			}()
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
 		}
 	}
