@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"runtime/debug"
 
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -595,13 +596,14 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 			// and only propagated to listeners that requested resync
 			defer func() {
 				if recover() != nil {
-					fmt.Println("panic occured, recovering")
+					fmt.Println("panic occured, recovering", string(debug.Stack()))
 					fmt.Println("old object", oldAccessor, "is nil", oldAccessor == nil)
-					fmt.Println("new object is nil", accessor, "is nil", accessor == nil)
+					fmt.Println("new object", accessor, "is nil", accessor == nil)
 					fmt.Println("before getting old resource version")
 					fmt.Println("old resource version", oldAccessor.GetResourceVersion())
 					fmt.Println("before getting new resource version")
 					fmt.Println("new resource version", accessor.GetResourceVersion())
+					fmt.Println("is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
 				}
 			}()
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
