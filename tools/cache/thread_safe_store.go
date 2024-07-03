@@ -18,6 +18,7 @@ package cache
 
 import (
 	"fmt"
+	"github.com/pborman/uuid"
 	"sync"
 
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -280,22 +281,23 @@ func (c *threadSafeMap) updateIndices(oldObj interface{}, newObj interface{}, ke
 			c.indices[name] = index
 		}
 
-		fmt.Printf("RCA indexValues = %v , %v ", indexValues, len(indexValues))
-		fmt.Printf("RCA oldIndexValues = %v , %v", oldIndexValues, len(oldIndexValues))
+		uuid := uuid.NewRandom().String()
+		fmt.Printf("RCA indexValues = %v , %v, uuid = %v\n", indexValues, len(indexValues), uuid)
+		fmt.Printf("RCA oldIndexValues = %v , %v, uuid = %v\n", oldIndexValues, len(oldIndexValues), uuid)
 		if len(indexValues) >= 1 {
-			fmt.Printf("RCA indexValue = %v %T", indexValues[0], indexValues[0])
+			fmt.Printf("RCA indexValue = %v %T uuid = %v\n", indexValues[0], indexValues[0], uuid)
 		} else {
-			fmt.Printf("RCA indexValues = length is less than 1")
+			fmt.Printf("RCA indexValues = length is less than 1 uuid = %v\n", uuid)
 		}
 		if len(oldIndexValues) >= 1 {
-			fmt.Printf("RCA oldIndexValue = %v %T", oldIndexValues[0], oldIndexValues[0])
+			fmt.Printf("RCA oldIndexValue = %v %T uuid = %v\n", oldIndexValues[0], oldIndexValues[0], uuid)
 		} else {
-			fmt.Printf("RCA oldIndexValues = length is less than 1")
+			fmt.Printf("RCA oldIndexValues = length is less than 1 uuid = %v\n", uuid)
 		}
 		if len(indexValues) == 1 && len(oldIndexValues) == 1 {
-			fmt.Printf("RCA equal = %v", indexValues[0] == oldIndexValues[0])
+			fmt.Printf("RCA equal = %v uuid = %v\n", indexValues[0] == oldIndexValues[0], uuid)
 		} else {
-			fmt.Printf("RCA length for both is not 1")
+			fmt.Printf("RCA length for both is not 1 uuid = %v\n", uuid)
 		}
 		if len(indexValues) == 1 && len(oldIndexValues) == 1 && indexValues[0] == oldIndexValues[0] {
 			// We optimize for the most common case where indexFunc returns a single value which has not been changed

@@ -23,6 +23,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pborman/uuid"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -585,10 +586,10 @@ func (s *sharedIndexInformer) OnAdd(obj interface{}) {
 // Conforms to ResourceEventHandler
 func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 	isSync := false
-
+	uuid := uuid.NewRandom().String()
 	if accessor, err := meta.Accessor(new); err == nil {
 		if oldAccessor, err := meta.Accessor(old); err == nil {
-			fmt.Printf("Kanika Before panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+			fmt.Printf("Kanika Before panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v\n",
 				oldAccessor,
 				oldAccessor,
 				&oldAccessor,
@@ -601,15 +602,16 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 				accessor.GetResourceVersion(),
 				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+				uuid,
 			)
 
 			defer func() {
 				r := recover()
 				if r != nil {
-					fmt.Println("Kanika After panic occurred, recovering", r)
-					fmt.Println("Kanika After panic Stack trace:")
+					fmt.Printf("Kanika After panic occurred, recovering uuid: %v %v\n", r, uuid)
+					fmt.Printf("Kanika After panic Stack trace, uuid: %v\n", uuid)
 					debug.PrintStack()
-					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -624,7 +626,7 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 					)
 				} else {
-					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -640,17 +642,17 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 					)
 				}
 			}()
-			fmt.Println("Kanika New variable assignment start")
+			fmt.Printf("Kanika New variable assignment start uuid: %v\n", uuid)
 			a := accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
-			fmt.Printf("Kanika New variable assignment done: %v", a)
+			fmt.Printf("Kanika New variable assignment done: %v uuid: %v\n", a, uuid)
 
-			fmt.Println("Kanika isSync variable assignment start")
+			fmt.Printf("Kanika isSync variable assignment start uuid: %v\n", uuid)
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
-			fmt.Printf("Kanika isSync variable assignment done: %v", isSync)
+			fmt.Printf("Kanika isSync variable assignment done: %v uuid: %v\n", isSync, uuid)
 		}
 	}
 
-	fmt.Println("Kanika outside now")
+	fmt.Printf("Kanika outside now: %v\n", uuid)
 	s.cacheMutationDetector.AddObject(new)
 	s.processor.distribute(updateNotification{oldObj: old, newObj: new}, isSync)
 }
