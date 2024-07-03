@@ -586,45 +586,71 @@ func (s *sharedIndexInformer) OnAdd(obj interface{}) {
 func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 	isSync := false
 
-	// If is a Sync event, isSync should be true
-	// If is a Replaced event, isSync is true if resource version is unchanged.
-	// If RV is unchanged: this is a Sync/Replaced event, so isSync is true
-
 	if accessor, err := meta.Accessor(new); err == nil {
 		if oldAccessor, err := meta.Accessor(old); err == nil {
-			fmt.Println("Before old object", oldAccessor, "is nil", oldAccessor == nil)
-			fmt.Println("Before new object", accessor, "is nil", accessor == nil)
-			fmt.Println("Before old resource version", oldAccessor.GetResourceVersion())
-			fmt.Println("Before new resource version", accessor.GetResourceVersion())
-			fmt.Println(fmt.Sprintf("Before old resource version type = %T", oldAccessor.GetResourceVersion()))
-			fmt.Println(fmt.Sprintf("Before new resource version type = %T", accessor.GetResourceVersion()))
-			fmt.Println("Before is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
+			fmt.Printf("Kanika Before panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+				oldAccessor,
+				oldAccessor,
+				&oldAccessor,
+				oldAccessor.GetResourceVersion(),
+				oldAccessor.GetResourceVersion(),
+				accessor,
+				accessor,
+				&accessor,
+				accessor.GetResourceVersion(),
+				accessor.GetResourceVersion(),
+				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+			)
 
 			defer func() {
 				r := recover()
 				if r != nil {
-					fmt.Println("After panic occurred, recovering", r)
-					fmt.Println("After Stack trace:")
+					fmt.Println("Kanika After panic occurred, recovering", r)
+					fmt.Println("Kanika After panic Stack trace:")
 					debug.PrintStack()
-					fmt.Println("After old object", oldAccessor, "is nil", oldAccessor == nil)
-					fmt.Println("After new object", accessor, "is nil", accessor == nil)
-					fmt.Println("After old resource version", oldAccessor.GetResourceVersion())
-					fmt.Println("After new resource version", accessor.GetResourceVersion())
-					fmt.Println(fmt.Sprintf("After old resource version type = %T", oldAccessor.GetResourceVersion()))
-					fmt.Println(fmt.Sprintf("After new resource version type = %T", accessor.GetResourceVersion()))
-					fmt.Println("After is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
+					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+						oldAccessor,
+						oldAccessor,
+						&oldAccessor,
+						oldAccessor.GetResourceVersion(),
+						oldAccessor.GetResourceVersion(),
+						accessor,
+						accessor,
+						&accessor,
+						accessor.GetResourceVersion(),
+						accessor.GetResourceVersion(),
+						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+					)
 				} else {
-					fmt.Println("no panic")
+					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T",
+						oldAccessor,
+						oldAccessor,
+						&oldAccessor,
+						oldAccessor.GetResourceVersion(),
+						oldAccessor.GetResourceVersion(),
+						accessor,
+						accessor,
+						&accessor,
+						accessor.GetResourceVersion(),
+						accessor.GetResourceVersion(),
+						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+					)
 				}
 			}()
-			fmt.Println("After isSync actual getting executed")
+			fmt.Println("Kanika New variable assignment start")
+			a := accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
+			fmt.Printf("Kanika New variable assignment done: %v", a)
+
+			fmt.Println("Kanika isSync variable assignment start")
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
-			fmt.Println("After isSync success")
+			fmt.Printf("Kanika isSync variable assignment done: %v", isSync)
 		}
 	}
 
-	// Invocation of this function is locked under s.blockDeltas, so it is
-	// save to distribute the notification
+	fmt.Println("Kanika outside now")
 	s.cacheMutationDetector.AddObject(new)
 	s.processor.distribute(updateNotification{oldObj: old, newObj: new}, isSync)
 }
