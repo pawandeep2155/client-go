@@ -280,6 +280,23 @@ func (c *threadSafeMap) updateIndices(oldObj interface{}, newObj interface{}, ke
 			c.indices[name] = index
 		}
 
+		fmt.Printf("RCA indexValues = %v , %v ", indexValues, len(indexValues))
+		fmt.Printf("RCA oldIndexValues = %v , %v", oldIndexValues, len(oldIndexValues))
+		if len(indexValues) >= 1 {
+			fmt.Printf("RCA indexValue = %v %T", indexValues[0], indexValues[0])
+		} else {
+			fmt.Printf("RCA indexValues = length is less than 1")
+		}
+		if len(oldIndexValues) >= 1 {
+			fmt.Printf("RCA oldIndexValue = %v %T", oldIndexValues[0], oldIndexValues[0])
+		} else {
+			fmt.Printf("RCA oldIndexValues = length is less than 1")
+		}
+		if len(indexValues) == 1 && len(oldIndexValues) == 1 {
+			fmt.Printf("RCA equal = %v", indexValues[0] == oldIndexValues[0])
+		} else {
+			fmt.Printf("RCA length for both is not 1")
+		}
 		if len(indexValues) == 1 && len(oldIndexValues) == 1 && indexValues[0] == oldIndexValues[0] {
 			// We optimize for the most common case where indexFunc returns a single value which has not been changed
 			continue

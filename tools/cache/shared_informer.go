@@ -19,9 +19,9 @@ package cache
 import (
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
-	"runtime/debug"
 
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -592,21 +592,34 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 
 	if accessor, err := meta.Accessor(new); err == nil {
 		if oldAccessor, err := meta.Accessor(old); err == nil {
-			// Events that didn't change resourceVersion are treated as resync events
-			// and only propagated to listeners that requested resync
+			fmt.Println("Before old object", oldAccessor, "is nil", oldAccessor == nil)
+			fmt.Println("Before new object", accessor, "is nil", accessor == nil)
+			fmt.Println("Before old resource version", oldAccessor.GetResourceVersion())
+			fmt.Println("Before new resource version", accessor.GetResourceVersion())
+			fmt.Println(fmt.Sprintf("Before old resource version type = %T", oldAccessor.GetResourceVersion()))
+			fmt.Println(fmt.Sprintf("Before new resource version type = %T", accessor.GetResourceVersion()))
+			fmt.Println("Before is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
+
 			defer func() {
-				if recover() != nil {
-					fmt.Println("panic occured, recovering", string(debug.Stack()))
-					fmt.Println("old object", oldAccessor, "is nil", oldAccessor == nil)
-					fmt.Println("new object", accessor, "is nil", accessor == nil)
-					fmt.Println("before getting old resource version")
-					fmt.Println("old resource version", oldAccessor.GetResourceVersion())
-					fmt.Println("before getting new resource version")
-					fmt.Println("new resource version", accessor.GetResourceVersion())
-					fmt.Println("is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
+				r := recover()
+				if r != nil {
+					fmt.Println("After panic occurred, recovering", r)
+					fmt.Println("After Stack trace:")
+					debug.PrintStack()
+					fmt.Println("After old object", oldAccessor, "is nil", oldAccessor == nil)
+					fmt.Println("After new object", accessor, "is nil", accessor == nil)
+					fmt.Println("After old resource version", oldAccessor.GetResourceVersion())
+					fmt.Println("After new resource version", accessor.GetResourceVersion())
+					fmt.Println(fmt.Sprintf("After old resource version type = %T", oldAccessor.GetResourceVersion()))
+					fmt.Println(fmt.Sprintf("After new resource version type = %T", accessor.GetResourceVersion()))
+					fmt.Println("After is sync matches", accessor.GetResourceVersion() == oldAccessor.GetResourceVersion())
+				} else {
+					fmt.Println("no panic")
 				}
 			}()
+			fmt.Println("After isSync actual getting executed")
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
+			fmt.Println("After isSync success")
 		}
 	}
 
