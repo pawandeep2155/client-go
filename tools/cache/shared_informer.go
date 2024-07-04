@@ -615,7 +615,7 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 					fmt.Printf("Kanika After panic occurred, recovering uuid: %v %v\n", r, uuid)
 					fmt.Printf("Kanika After panic Stack trace, uuid: %v\n", uuid)
 					debug.PrintStack()
-					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %p %v\n",
+					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %v %p %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -630,11 +630,12 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 						uuid,
 						&a,
+						a,
 						&isSync,
 						isSync,
 					)
 				} else {
-					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %p %v\n",
+					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %v %p %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -649,6 +650,7 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 						uuid,
 						&a,
+						a,
 						&isSync,
 						isSync,
 					)
