@@ -588,9 +588,10 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 	isSync := false
 	a := false
 	uuid := uuid.NewRandom().String()
+	fmt.Printf("Kanika function enter uuid = %v, caller = %v printing memory address a = %p, isSync = %p\n", uuid, *s, &a, &isSync)
 	if accessor, err := meta.Accessor(new); err == nil {
 		if oldAccessor, err := meta.Accessor(old); err == nil {
-			fmt.Printf("Kanika Before panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v\n",
+			fmt.Printf("Kanika Before panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %p\n",
 				oldAccessor,
 				oldAccessor,
 				&oldAccessor,
@@ -604,6 +605,8 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 				accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 				uuid,
+				&a,
+				&isSync,
 			)
 
 			defer func() {
@@ -612,7 +615,7 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 					fmt.Printf("Kanika After panic occurred, recovering uuid: %v %v\n", r, uuid)
 					fmt.Printf("Kanika After panic Stack trace, uuid: %v\n", uuid)
 					debug.PrintStack()
-					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v,\n",
+					fmt.Printf("Kanika After panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %p %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -626,10 +629,12 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 						uuid,
+						&a,
+						&isSync,
+						isSync,
 					)
-					fmt.Printf("Kanika uuid: %v, isSync: %v\n", uuid, isSync)
 				} else {
-					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v\n",
+					fmt.Printf("Kanika No panic, old: %v, old type: %T, old address: %p, old RV: %v, old RV type: %T, new: %v, new type: %T, new address: %p, new RV: %v, new RV type: %T, isSame: %v, type: %T, uuid: %v %p %p %v\n",
 						oldAccessor,
 						oldAccessor,
 						&oldAccessor,
@@ -642,20 +647,23 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 						accessor.GetResourceVersion(),
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
 						accessor.GetResourceVersion() == oldAccessor.GetResourceVersion(),
+						uuid,
+						&a,
+						&isSync,
+						isSync,
 					)
-					fmt.Printf("Kanika uuid: %v, isSync: %v\n", uuid, isSync)
 				}
 			}()
 
-			fmt.Printf("Kanika uuid = %v, caller = %v", uuid, *s)
+			fmt.Printf("Kanika uuid = %v, caller = %v printing memory address a = %p, isSync = %p\n", uuid, *s, &a, &isSync)
 
-			fmt.Printf("Kanika New variable assignment start uuid: %v, a = %v\n", uuid, a)
+			fmt.Printf("Kanika New variable assignment start uuid: %v, a = %v address of a = %p\n", uuid, a, &a)
 			a = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
-			fmt.Printf("Kanika New variable assignment done: %v uuid: %v, a = %v\n", uuid, a)
+			fmt.Printf("Kanika New variable assignment done uuid: %v, a = %v address of a = %p\n", uuid, a, &a)
 
-			fmt.Printf("Kanika isSync variable assignment start uuid: %v, isSync: %v\n", uuid, isSync)
+			fmt.Printf("Kanika isSync variable assignment start uuid: %v, isSync: %v address = %p\n", uuid, isSync, &isSync)
 			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
-			fmt.Printf("Kanika isSync variable assignment uuid: %v, isSync: %v\n", uuid, isSync)
+			fmt.Printf("Kanika isSync variable assignment done uuid: %v, isSync: %v address = %p\n", uuid, isSync, &isSync)
 		}
 	}
 
